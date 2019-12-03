@@ -9,9 +9,10 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './redux/reducers';
 import Thunk from 'redux-thunk';
-import { Text, AsyncStorage, Image, TouchableOpacity,View, Platform } from 'react-native';
+import { Text, Image, TouchableOpacity,View, Platform } from 'react-native';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+// import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -26,7 +27,7 @@ const myFont = Platform.select({
 
 const persistConfig = {
     key: 'root',
-    storage,
+    storage: AsyncStorage,
     // blacklist: ['language','auth'],
     whitelist: ['language', 'auth']
 }

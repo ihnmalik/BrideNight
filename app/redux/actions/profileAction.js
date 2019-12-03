@@ -1,4 +1,5 @@
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
+
 import { UPDATE_PROFILE_NAME,
          UPDATE_PROFILE_EMAIL,
          UPDATE_PROFILE_MOBILE,

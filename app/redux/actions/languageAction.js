@@ -1,5 +1,6 @@
 import { CHANGE_TO_ARABIC, CHANGE_TO_ENGLISH } from './types';
-import { AsyncStorage } from 'react-native';
+// import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage'
 import RNRestart from 'react-native-restart';
 
 const ar = require('../../i18n/ar.json');
