@@ -26,7 +26,6 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import Icons from 'react-native-vector-icons/Ionicons'
 
 const App: () => React$Node = () => {
   return (
@@ -36,7 +35,6 @@ const App: () => React$Node = () => {
       <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.linearGradient}>
   <Text style={{height: 500}}>
     Sign in with Facebook
-    <Icons name="close" />
   </Text>
 </LinearGradient>
         <ScrollView
