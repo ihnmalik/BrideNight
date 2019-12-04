@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet,SafeAreaView, Image, Keyboard, Button,TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView, ActivityIndicator, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet,SafeAreaView, Image, Keyboard, Button,TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView, ActivityIndicator } from 'react-native';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
 import { logIn, logOut } from '../redux/actions/authAction';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage'
 import { url } from '../utils/appsettings';
 
 
@@ -67,8 +68,12 @@ export class Login extends Component {
             body: `login=${log}&password=${password}&push_token=${push_token}&uuid=${uuid}`
             // body: post
         })
-        .then(r => r.json())
+        .then(r => {
+            console.log(r)
+            return r.json()
+        })
         .then((re) => {
+            console.log(re)
             // console.log(data)
             if(re.error) return this.setState({showError: true, errorMsg: re.message, isLoading: false});
             if(re.errors){

@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet,SafeAreaView, Image, Keyboard, Button,TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView, ActivityIndicator, YellowBox, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet,SafeAreaView, Image, Keyboard, Button,TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView, ActivityIndicator, YellowBox } from 'react-native';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
 import { logIn, logOut } from '../redux/actions/authAction';
 import DropdownMenu from 'react-native-dropdown-menu';
+import AsyncStorage from '@react-native-community/async-storage'
 import RadioGroup from 'react-native-radio-button-group';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { url } from '../utils/appsettings';
@@ -120,8 +121,13 @@ export class Register extends Component {
             },
             body: `name=${this.state.name}&email=${this.state.email}&mobile=${this.state.mobile}&password=${this.state.password}&password_confirmation=${this.state.password_confirmation}&role_name=${this.state.selected.role_name}&push_token=${this.state.push_token}&uuid=${this.state.uuid}`
         })
-        .then((res) => res.json())
+        .then((res) => {
+            console.log('inside 1',res)
+            console.log('inside 2',res.json())
+            return res.json()
+        })
         .then((re) => {
+            console.log('res', re)
             // alert(JSON.stringify(re))
             if(re.errors){
                 for(let err in re.errors) {

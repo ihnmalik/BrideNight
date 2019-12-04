@@ -1,14 +1,27 @@
-import React, {Component} from 'react';
-import { View, Text, StyleSheet,SafeAreaView, Image, Keyboard, Button,TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView } from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import {
+    View, Text, StyleSheet, SafeAreaView, ActivityIndicator,
+    Alert, Image, Keyboard, Button, TextInput, KeyboardAvoidingView, TouchableOpacity, StatusBar, ImageBackground, ScrollView
+} from 'react-native';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { url } from '../utils/appsettings';
 
-    // green:    #7bbe50,
-    // blue:  #188ee1,
+// green:    #7bbe50,
+// blue:  #188ee1,
 
 export class Reset extends Component {
+    state = {
+        email: '',
+        showError: false,
+        errorMsg: '',
+        isLoading: false
+    }
+    onChangeText = (key, val) => {
+        this.setState({ [key]: val })
+    }
     back = () => {
         this.props.navigation.navigate('AppLanguage')
     }
@@ -19,6 +32,48 @@ export class Reset extends Component {
 
     resetPass = () => {
         this.props.navigation.navigate('ResetPass')
+    }
+
+
+    handleResetPass = () => {
+        this.setState({ isLoading: true })
+        if (this.state.email.length > 0) {
+            const { lang } = this.props.language
+            fetch(url + 'auth/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                    'Language': lang
+                },
+                body: `login=${this.state.email}`
+                // body: post
+            })
+                .then(r => {
+                    console.log(r)
+                    return r.json()
+                })
+                .then((re) => {
+                    if (re.error) return this.setState({ showError: true, errorMsg: re.message, isLoading: false });
+                    if (re.errors) {
+                        for (let err in re.errors) {
+                            this.setState({ showError: true, errorMsg: re.errors[err], isLoading: false });
+                        }
+                        return;
+                    } else {
+                        this.setState({isLoading: false, email: ''})
+                        Alert.alert('Reset Password', re.message)
+                    }
+                })
+        } else {
+            this.setState({
+                showError: true,
+                errorMsg: "Please Enter a valid Email/Mobile",
+                isLoading: false,
+                errorMsg: '',
+                showError: false
+            })
+        }
     }
 
     _dismissKeyboard = () => {
@@ -32,12 +87,12 @@ export class Reset extends Component {
 
         return (
             <SafeAreaView style={styles.container}>
-                    {/* <StatusBar /> */}
-                    <TouchableOpacity onPress={this._dismissKeyboard} activeOpacity={1} style={{flex: 1}}>
-                    <ImageBackground source={require('../assets/images/splash.png')} style={{flex: 1}}>
-                        <View style={{flexDirection: 'row', padding: 10, marginTop: 14, justifyContent: 'flex-start'}}>
+                {/* <StatusBar /> */}
+                <TouchableOpacity onPress={this._dismissKeyboard} activeOpacity={1} style={{ flex: 1 }}>
+                    <ImageBackground source={require('../assets/images/splash.png')} style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', padding: 10, marginTop: 14, justifyContent: 'flex-start' }}>
                             <TouchableOpacity onPress={() => this.props.navigation.pop()}>
-                                <Icon  name="md-arrow-back" color="#fff" size={33}/>
+                                <Icon name="md-arrow-back" color="#fff" size={33} />
                             </TouchableOpacity>
                         </View>
 
@@ -45,18 +100,39 @@ export class Reset extends Component {
                             <Text style={{color: '#fff', textAlign: 'center'}}>Bride Night</Text>
                         </View>   */}
                     </ImageBackground>
-                    <KeyboardAvoidingView style={{flex: 3, backgroundColor: '#eee'}}>
-                        <ScrollView style={{paddingTop: 60}}>
-                            <Text style={{textAlign: 'center', fontSize: 19, color: 'gray'}}>Type in your registered email to receive verification code</Text>
-                            <View style={{padding: 18, marginTop: 18}}>
-                                <TextInput placeholder="Email" style={{padding: 14, backgroundColor: '#fff', borderRadius: 25, marginTop: 15, fontSize: 14 }} />
+                    <KeyboardAvoidingView style={{ flex: 3, backgroundColor: '#eee' }}>
+                        <ScrollView style={{ paddingTop: 60 }}>
+                            <Text style={{ textAlign: 'center', fontSize: 19, color: 'gray' }}>Type in your registered Email/Mobile to receive verification code</Text>
+                            <Text 
+                                style={{ 
+                                    textAlign: 'center', fontSize: 15, 
+                                    marginTop: 10, color: this.state.showError ? '#DC143C' : 'green' 
+                                    }}
+                            >
+                                {this.state.errorMsg}
+                            </Text>
+                            <View style={{ padding: 18, marginTop: 18 }}>
+                                <TextInput
+                                    autoCapitalize={"none"}
+                                    placeholder="Email"
+                                    value={this.state.email}
+                                    onChangeText={(val) => this.onChangeText('email', val)}
+                                    style={{ padding: 14, backgroundColor: '#fff', borderRadius: 25, marginTop: 15, fontSize: 14 }}
+                                />
 
-                                <TouchableOpacity activeOpacity={.7} style={{padding: 14, backgroundColor: '#000', borderRadius: 25, marginTop: 15}}>
-                                    <Text style={{textAlign: 'center', color: '#fff', fontSize: 14}}>Reset</Text>
+                                <TouchableOpacity
+                                    onPress={this.handleResetPass}
+                                    activeOpacity={.7}
+                                    style={{ padding: 14, backgroundColor: '#000', borderRadius: 25, marginTop: 15 }}
+                                >
+                                    {
+                                        this.state.isLoading ? (<ActivityIndicator size="small" color="white" />) : (<Text style={{ textAlign: 'center', color: '#fff', fontSize: 14 }}>Reset</Text>)
+                                    }
+                                    {/* <Text style={{textAlign: 'center', color: '#fff', fontSize: 14}}>Reset</Text> */}
                                 </TouchableOpacity>
 
-                                <View style={{flexDirection: 'row', marginTop: 27, justifyContent: 'center'}}>
-                                    <TouchableOpacity activeOpacity={.6} style={{marginHorizontal: 5}} onPress={() => this.props.navigation.pop()}><Text style={{textDecorationLine: 'underline'}}>Back</Text></TouchableOpacity>
+                                <View style={{ flexDirection: 'row', marginTop: 27, justifyContent: 'center' }}>
+                                    <TouchableOpacity activeOpacity={.6} style={{ marginHorizontal: 5 }} onPress={() => this.props.navigation.pop()}><Text style={{ textDecorationLine: 'underline' }}>Back</Text></TouchableOpacity>
                                 </View>
                             </View>
                         </ScrollView>
@@ -72,10 +148,10 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-return bindActionCreators({
-    changeToArabic,
-    changeToEnglish
-}, dispatch)
+    return bindActionCreators({
+        changeToArabic,
+        changeToEnglish
+    }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reset)
@@ -129,6 +205,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 8,
         alignItems: 'center'
-        
+
     }
 })

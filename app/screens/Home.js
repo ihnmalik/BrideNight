@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView , StatusBar, FlatList, RefreshControl, Platform, Dimensions, AsyncStorage, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView , StatusBar, FlatList, RefreshControl, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
 import { logIn, logOut } from '../redux/actions/authAction';
 import { url } from '../utils/appsettings';
+import AsyncStorage from '@react-native-community/async-storage'
 
 
 

@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Image, AsyncStorage } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { logIn, logOut } from '../redux/actions/authAction';
 import { url } from '../utils/appsettings';

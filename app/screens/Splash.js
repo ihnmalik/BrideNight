@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Image, Text, StatusBar, Platform, ImageBackground, AsyncStorage, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Image, Text, StatusBar, Platform, ImageBackground, ActivityIndicator } from 'react-native';
 import {url} from '../utils/appsettings';
 // import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import AsyncStorage from '@react-native-community/async-storage'
 import { logIn, logOut } from '../redux/actions/authAction';
 
 

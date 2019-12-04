@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Image, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ScrollView, AsyncStorage, Platform, TextInput } from 'react-native';
+import { View, StatusBar, Image, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ScrollView, Platform, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,6 +10,8 @@ import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import { updateProfileName, updateProfileEmail, updateProfileMobile, updateProfileProfileMobile, updateProfileAboutAR, updateProfileAboutEN, updateProfileStatus, updateProfileStatusLabel, updateProfileLocale, updateProfileAvatar, updateCountryCity, updateProfilePushToken, updateProfileUUID, updateProfileLogOut } from '../redux/actions/profileAction';
 import { Dropdown } from 'react-native-material-dropdown';
+import AsyncStorage from '@react-native-community/async-storage'
+
 
 
     // green:    #7bbe50,
