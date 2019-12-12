@@ -58,6 +58,10 @@ const items = [{
 //     {index: 8, name: 'tab8', title: 'Tab 8'},
 //   ]
 export class Home extends Component {
+    static navigationOptions = {
+        // title: 'color',
+        // headerTitleStyle: { alignSelf: 'center' },
+    }
 
     constructor(props) {
         super(props);
