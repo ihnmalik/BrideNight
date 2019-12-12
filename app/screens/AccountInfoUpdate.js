@@ -30,7 +30,7 @@ const users = [];
     super(props);
     this.state = {
       // users: users,
-      profile: {user: {avatar: ''}},
+      profile: props.profile ? {...props.profile, user: {avatar: ''}} : {user: {avatar: '', name: '', email: '', phone: '', mobile: '', profile_mobile: ''}},
       token: '',
       name: '',
       email: '',
@@ -230,10 +230,10 @@ _openImagePickerType = () => {
 } // end of _openImagePickerType
 
     // content change handlers
-    _handleNameChange = name => this.setState({name})
-    _handleEmailChange = email => this.setState({email})
-    _handleMobileChange = mobile => this.setState({mobile})
-    _handleProfileMobileChange = profile_mobile => this.setState({profile_mobile})
+    _handleNameChange = name => this.setState({profile: {...this.state.profile, user: {...this.state.profile.user, name: name}}})
+    _handleEmailChange = email => this.setState({profile: {...this.state.profile, user: {...this.state.profile.user, email: email}}})
+    _handleMobileChange = mobile => this.setState({profile: {...this.state.profile, user: {...this.state.profile.user, mobile: mobile}}})
+    _handleProfileMobileChange = profile_mobile => this.setState({profile: {...this.state.profile, user: {...this.state.profile.user, profile_mobile: profile_mobile}}})
     _handleCountryChange = countryID => {
         // for(let country of this.state.countries){
         //     country.value == countryID
@@ -398,8 +398,8 @@ _openImagePickerType = () => {
     } // end of _updateProfileEmail()
 
     _updateProfileMobile = () => {
-        if(!this.state.mobile) return this.setState({showError: true, mobileMsg: this.props.language.lang == 'ar' ? 'حقل تعديل رقم الجوال فارغ' : 'No changes were made to your phone number'});
-        if(this.state.mobile.length < 10) return this.setState({showError: true, mobileMsg: this.props.language.lang == 'ar' ? 'رقم الجوال المدخل غير صحيح' : 'Invalid Phone Number'});
+        if(!this.state.profile.user.mobile) return this.setState({showError: true, mobileMsg: this.props.language.lang == 'ar' ? 'حقل تعديل رقم الجوال فارغ' : 'No changes were made to your phone number'});
+        if(this.state.profile.user.mobile.length < 10) return this.setState({showError: true, mobileMsg: this.props.language.lang == 'ar' ? 'رقم الجوال المدخل غير صحيح' : 'Invalid Phone Number'});
 
 
         fetch(url + 'user/profile', {
@@ -410,7 +410,7 @@ _openImagePickerType = () => {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `mobile=${this.state.mobile}`
+            body: `mobile=${this.state.profile.user.mobile}`
         })
         .then((r) => r.json())
         .then((data) => {
@@ -441,8 +441,8 @@ _openImagePickerType = () => {
 
     _updateProfileProfileMobile = () => {
         
-        if(!this.state.profile_mobile) return this.setState({showError: true, profileMobileMsg: this.props.language.lang == 'ar' ? 'حقل تعديل رقم الجوال فارغ' : 'No changes were made to your phone number'});
-        if(this.state.profile_mobile.length < 10) return this.setState({showError: true, profileMobileMsg: this.props.language.lang == 'ar' ? 'رقم الجوال المدخل غير صحيح' : 'Invalid Phone Number'});
+        if(!this.state.profile.user.profile_mobile) return this.setState({showError: true, profileMobileMsg: this.props.language.lang == 'ar' ? 'حقل تعديل رقم الجوال فارغ' : 'No changes were made to your phone number'});
+        if(this.state.profile.user.profile_mobile.length < 10) return this.setState({showError: true, profileMobileMsg: this.props.language.lang == 'ar' ? 'رقم الجوال المدخل غير صحيح' : 'Invalid Phone Number'});
 
 
         fetch(url + 'user/profile', {
@@ -453,7 +453,7 @@ _openImagePickerType = () => {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `profile_mobile=${this.state.profile_mobile}`
+            body: `profile_mobile=${this.state.profile.user.profile_mobile}`
         })
         .then((r) => r.json())
         .then((data) => {
@@ -670,6 +670,8 @@ _openImagePickerType = () => {
   render() {
       
     const { profile } = this.props;
+    console.warn(profile)
+
     //   alert(JSON.stringify(profile))
     return (
       this.props.auth.isLoggedIn && this.state.profile ? 
@@ -703,7 +705,12 @@ _openImagePickerType = () => {
                         <TouchableOpacity onPress={this._updateProfileName} activeOpacity={.8} style={{padding: 5, backgroundColor: '#303031', justifyContent: 'center'}}>
                             <Text style={{color: '#fff'}}>Save</Text>
                         </TouchableOpacity>
-                        <TextInput style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} placeholder={profile.name ? profile.name : this.state.profile.user.name} autoCapitalize="words" value={this.state.name} onChangeText={this._handleNameChange} />
+                        <TextInput 
+                            style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} 
+                            placeholder={"Enter Name"} 
+                            autoCapitalize="words" 
+                            value={this.state.profile.user.name} 
+                            onChangeText={this._handleNameChange} />
                     </View>
                 </View>
                 <View style={{flex: 1, padding: 10, justifyContent: 'center'}}>
@@ -717,7 +724,15 @@ _openImagePickerType = () => {
                         <TouchableOpacity onPress={this._updateProfileEmail} activeOpacity={.8} style={{padding: 5, backgroundColor: '#303031', justifyContent: 'center'}}>
                             <Text style={{color: '#fff'}}>Save</Text>
                         </TouchableOpacity>
-                        <TextInput style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} keyboardType="email-address" autoCapitalize='none' autoCompleteType="email" placeholder={profile.email ? profile.email : this.state.profile.user.email} value={this.state.email} onChangeText={this._handleEmailChange}/>
+                        <TextInput 
+                            style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} 
+                            keyboardType="email-address" 
+                            autoCapitalize='none' 
+                            autoCompleteType="email" 
+                            placeholder={"Enter Email"} 
+                            value={this.state.profile.user.email} 
+                            onChangeText={this._handleEmailChange}
+                        />
                     </View>
                 </View>
                 <View style={{flex: 1, padding: 10, justifyContent: 'center'}}>
@@ -731,7 +746,14 @@ _openImagePickerType = () => {
                         <TouchableOpacity onPress={this._updateProfileMobile} activeOpacity={.8} style={{padding: 5, backgroundColor: '#303031', justifyContent: 'center'}}>
                             <Text style={{color: '#fff'}}>Save</Text>
                         </TouchableOpacity>
-                        <TextInput style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} keyboardType="phone-pad" maxLength={13} placeholder={profile.mobile ? profile.mobile : (this.state.profile.user.mobile ? this.state.profile.user.mobile : 'e.g +966-321-654-987')} value={this.state.mobile} onChangeText={this._handleMobileChange}/>
+                        <TextInput 
+                            style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}} 
+                            keyboardType="phone-pad" 
+                            maxLength={13} 
+                            placeholder={'e.g +966-321-654-987'} 
+                            value={this.state.profile.user.mobile} 
+                            onChangeText={this._handleMobileChange}
+                        />
                     </View>
                 </View>
                 <View style={{flex: 1, padding: 10, justifyContent: 'center'}}>
@@ -745,7 +767,14 @@ _openImagePickerType = () => {
                         <TouchableOpacity onPress={this._updateProfileProfileMobile} activeOpacity={.8} style={{padding: 5, backgroundColor: '#303031', justifyContent: 'center'}}>
                             <Text style={{color: '#fff'}}>Save</Text>
                         </TouchableOpacity>
-                        <TextInput style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}}  keyboardType="phone-pad" maxLength={13} placeholder={profile.profile_mobile ? profile.profile_mobile : (this.state.profile.user.profile_mobile ? this.state.profile.user.profile_mobile : 'e.g +966-321-654-987')} value={this.state.profile_mobile} onChangeText={this._handleProfileMobileChange}/>
+                        <TextInput 
+                            style={{ flex: 1,padding: 10, borderWidth: 1, borderColor: '#303031'}}  
+                            keyboardType="phone-pad" 
+                            maxLength={13} 
+                            placeholder={'e.g +966-321-654-987'} 
+                            value={this.state.profile.user.profile_mobile} 
+                            onChangeText={this._handleProfileMobileChange}
+                        />
                     </View>
                 </View>
 
