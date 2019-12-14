@@ -16,12 +16,21 @@ import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
+// const myFont = Platform.select({
+//     ios: {
+//       fontFamily: 'GESSTwoLight-Light',
+//     },
+//     android: {
+//       fontFamily: 'ArbFONTS-rabi3',
+//     },
+//   });
+
 const myFont = Platform.select({
     ios: {
       fontFamily: 'GESSTwoLight-Light',
     },
     android: {
-      fontFamily: 'ArbFONTS-rabi3',
+      fontFamily: 'NotoNaskhArabic-Regular',
     },
   });
 

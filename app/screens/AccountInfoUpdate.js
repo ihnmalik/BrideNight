@@ -49,9 +49,19 @@ const users = [];
       userTypes: [],
       userTypeID: '', 
       countries: [],
+      days: [
+        {value: 1, label: 'Saturday', index: 0},
+        {value: 2, label: 'Sunday', index: 1},
+        {value: 3, label: 'Monday', index: 2},
+        {value: 4, label: 'Tuesday', index: 3},
+        {value: 5, label: 'Wednesday', index: 4},
+        {value: 6, label: 'Thursday', index: 5},
+        {value: 7, label: 'Friday', index: 6}
+      ],
       cities: [],
       cityID: '',
       countryID: '',
+      dayId: '',
       cityIndex: '',
       countryIndex: '',
       // error show/hide toggle variable
@@ -899,6 +909,21 @@ _openImagePickerType = () => {
                             <Text style={{color: '#fff', textAlign: 'center'}}>Save Password</Text>
                     </TouchableOpacity>
                 </View>
+
+                <View style={{flex: 1, paddingHorizontal: 10, justifyContent: 'center'}}>
+                <Text style={{textAlign: 'center', marginTop: 20}}>Add Work Time</Text>
+                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{flex: 1, justifyContent: 'center', paddingBottom: 25}}>
+                                <Dropdown
+                                    label='Select Day'
+                                    value={this.state.dayId}
+                                    data={this.state.days}
+                                    onChangeText={this._handleCountryChange}
+                                />
+                            </View>
+                        </View>
+                       
+                    </View>
             </View>
           </View>
         </ScrollView>
