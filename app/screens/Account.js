@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Image, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ScrollView, Platform } from 'react-native';
+import { View, StatusBar, Image, Text, StyleSheet, FlatList, Linking, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,6 +7,9 @@ import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction
 import { logIn, logOut } from '../redux/actions/authAction';
 import { url } from '../utils/appsettings';
 import AsyncStorage from '@react-native-community/async-storage'
+
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 
 // green:    #7bbe50,
 // blue:  #188ee1,
@@ -30,6 +33,9 @@ class Account extends Component {
       photos: [],
       videos: [],
       pageIndex: 16,
+      photoErr: '',
+      showError: false,
+      isPhotoLoading: false
     };
   }
 
@@ -100,6 +106,7 @@ class Account extends Component {
       .then((wt) => {
         // alert(JSON.stringify(wt))
         if (wt.error) return;
+        console.log("work time", wt.data)
         return this.setState({ workTimes: wt.data })
       })
   } // end of _loadWorkTimes()
@@ -119,6 +126,7 @@ class Account extends Component {
       .then((wt) => {
         // alert(JSON.stringify(wt))
         if (wt.error) return;
+        console.log("my Images", wt.data);
         return this.setState({ photos: wt.data })
       })
   } // end of _loadUserPhotos()
@@ -146,8 +154,183 @@ class Account extends Component {
   } // end of_editProfile()
 
 
-  render() {
 
+  options = {
+    title: this.props.language.lang == 'ar' ? 'اختيار صورة العرض' : 'Pick Profile Photo',
+    chooseFromLibraryButtonTitle: this.props.language.lang == 'ar' ? 'اختيار من معرض الصور' : 'Choose from Photo Library',
+    takePhotoButtonTitle: this.props.language.lang == 'ar' ? 'التقاط صورة بالكاميرا' : 'Use Camera to take a picture',
+    cancelButtonTitle: this.props.language.lang == 'ar' ? 'إلغاء' : 'Cancel',
+    quality: 1.0,
+    maxWidth: 500,
+    maxHeight: 500,
+    storageOptions: {
+      skipBackup: true
+    },
+    allowsEditing: true
+  };
+
+
+  videoOptions = {
+    title: this.props.language.lang == 'ar' ? 'اختيار صورة العرض' : 'Pick Profile Photo',
+    chooseFromLibraryButtonTitle: this.props.language.lang == 'ar' ? 'اختيار من معرض الصور' : 'Choose from Photo Library',
+    takePhotoButtonTitle: this.props.language.lang == 'ar' ? 'التقاط صورة بالكاميرا' : 'Use Camera to take a picture',
+    cancelButtonTitle: this.props.language.lang == 'ar' ? 'إلغاء' : 'Cancel',
+    mediaType: 'video',
+    videoQuality: 'medium',
+    // allowsEditing: true,
+    quality: 1
+  }
+
+  // update functions
+  uploadImage = (img) => {
+
+    this.setState({ isPhotoLoading: true })
+
+    RNFetchBlob.fetch('POST', url + 'user/photos', {
+      'Authorization': `Bearer ${this.state.profile.token}`,
+      // 'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+      'language': this.props.language.lang,
+    }, [
+      { name: 'media', filename: new Date().getTime() + '.png', type: 'image/png', data: img }
+    ])
+      .then((res) => res.json())
+      .then((resp) => {
+
+        console.log(resp)
+        if (resp.error) return this.setState({ showError: true, photoErr: resp.message, isPhotoLoading: false });
+        let newImg = resp.data.avatar;
+        // alert(JSON.stringify(resp))
+        this.setState({ isPhotoLoading: false, tstBgColor: '#7bbe50', showError: false, photoErr: '' });
+
+        this._loadUserPhotos(this.state.profile.user.id)
+        // this.showToast(res.message, Toast.SHORT , Toast.BOTTOM, '#7bbe50');       
+      }).catch((e) => {
+        alert(e)
+      })
+
+  } // end of _updateProfileAvatar()
+
+  // update functions
+  uploadVideo = (video) => {
+
+    this.setState({ isVideoLoading: true })
+
+    RNFetchBlob.fetch('POST', url + 'user/videos', {
+      'Authorization': `Bearer ${this.state.profile.token}`,
+      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+      // "Accept":"multipart/form-data",
+      'language': this.props.language.lang,
+    }, [
+      { name: 'media', filename: new Date().getTime() + '.mp4', data: RNFetchBlob.wrap(video) }
+    ])
+      .then((res) => res.json())
+      .then((resp) => {
+
+        console.log(resp)
+        if (resp.error) return this.setState({ showError: true, videErr: resp.message, isVideoLoading: false });
+        // alert(JSON.stringify(resp))
+        this.setState({ isVideoLoading: false, tstBgColor: '#7bbe50', showError: false, videErr: '' });
+
+        this._loadUserVids(this.state.profile.user.id)
+        // this.showToast(res.message, Toast.SHORT , Toast.BOTTOM, '#7bbe50');       
+      }).catch((e) => {
+        alert(e)
+      })
+
+  } // end of _updateProfileAvatar()
+
+
+  handleImageUpload = () => {
+    // TODO: camera or picker code goes here
+    ImagePicker.showImagePicker(this.options, (response) => {
+
+      if (response.didCancel) {
+
+      } else if (response.error) {
+        this.setState({ tstBgColor: '#DC143C' });
+        this.setState({ showError: true, photoErr: this.props.language.lang == 'ar' ? 'تعذر تحديث صورة الملف ' : 'Sorry, your profile image has not been updated' });
+      } else {
+
+        const uploadImg = response.data;
+        const src = response.uri;
+        // // alert(uploadImg)
+        // this.setState({
+        //     avatar: src,
+        //     avatarData: uploadImg
+        // });
+        //   console.log(source)
+        this.uploadImage(uploadImg)
+      }
+    });
+  } // end of _openImagePickerType
+
+
+
+  handleVideoUpload = () => {
+    ImagePicker.showImagePicker(this.videoOptions, (response) => {
+      if (response.didCancel) {
+
+      } else if (response.error) {
+        this.setState({ tstBgColor: '#DC143C' });
+        this.setState({ showError: true, videErr: this.props.language.lang == 'ar' ? 'تعذر تحديث صورة الملف ' : 'Sorry, your video has not been updated' });
+      } else {
+
+        const uploadVideo = response.data;
+        const src = response.uri;
+
+        this.uploadVideo(response.uri)
+      }
+    })
+  }
+  handleDeleteImage = (media_id) => {
+    fetch(`${url}media/photos/${media_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${this.state.profile.token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'language': this.props.language.lang,
+        // 'Authorization': 'Bearer ' + this.state.profile.token
+      }
+    })
+      .then(r => r.json())
+      .then((wt) => {
+        // alert(JSON.stringify(wt))
+        if (wt.error) return this.setState({ showError: true, photoErr: wt.message });
+
+        this._loadUserPhotos(this.state.profile.user.id)
+      }).catch((e) => {
+        alert(JSON.stringify(e))
+      })
+  }
+
+  handleDeleteVideo = (media_id) => {
+    fetch(`${url}media/photos/${media_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${this.state.profile.token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'language': this.props.language.lang,
+        // 'Authorization': 'Bearer ' + this.state.profile.token
+      }
+    })
+      .then(r => r.json())
+      .then((wt) => {
+        // alert(JSON.stringify(wt))
+        if (wt.error) return this.setState({ showError: true, videErr: wt.message });
+
+        this._loadUserVids(this.state.profile.user.id)
+      }).catch((e) => {
+        alert(JSON.stringify(e))
+      })
+  }
+  render() {
+    console.warn(this.state.workTimes)
     // alert(JSON.stringify(profile))
     return (
       this.props.auth.isLoggedIn && this.state.profile ?
@@ -252,16 +435,20 @@ class Account extends Component {
 
               {
                 this.state.profile.user.isSubscriber && this.state.workTimes ?
-
-                  this.state.workTimes.map((item) => {
-                    return (
-                      <View style={{ width: '90%', padding: 7, marginVertical: 5, backgroundColor: '#fff', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <Text style={{ color: '#000', textAlign: 'center', fontWeight: '200' }}>{item}</Text>
-
-                        <Text style={{ color: '#000', textAlign: 'center', fontWeight: '200' }}>أوقات العمل</Text>
-                      </View>
-                    )
-                  })
+                  <View style={{ width: '90%', padding: 7, marginVertical: 5, backgroundColor: '#fff', flexDirection: 'column', }}>
+                    <Text style={{ color: '#000', textAlign: 'right', fontWeight: '200' }}>أوقات العمل</Text>
+                    {this.state.workTimes.map((item) => {
+                      return (
+                        <View style={{ display: 'flex', flexDirection: 'row', padding: 10 }}>
+                          <Text style={{ color: '#000', textAlign: 'left', fontWeight: '200' }}>{item}</Text>
+                          <Icon
+                            name="md-trash" style={{ marginLeft: 'auto', fontSize: 20 }}
+                          // onPress={}
+                          />
+                        </View>
+                      )
+                    })}
+                  </View>
 
                   : null
 
@@ -284,9 +471,29 @@ class Account extends Component {
                   ) : null
                   : null
               }
-
-
+              {/* 
               <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Text style={{ paddingHorizontal: 8, textAlign: 'left', fontSize: 14, marginVertical: 10, color: '#000', fontWeight: '200' }}>
+                    Subscription Expires in
+                  </Text>
+
+                  <View style={{ display: 'flex', flexDirection: 'column', marginLeft: 'auto' }}>
+                    <Text style={{ paddingHorizontal: 8, textAlign: 'left', fontSize: 14, marginVertical: 10, color: '#000', fontWeight: '200' }}>
+                      20-10-2020
+                    </Text>
+                    <TouchableOpacity style={{ padding: 7, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5, marginLeft: 'auto' }} onPress={() => this.props.navigation.navigate('AddPhoto')}>
+                      <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>Renew Now</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                </View>
+              </View> */}
+
+
+              <Text style={{ color: this.state.showError && this.state.photoErr ? 'red' : 'green', textAlign: 'center' }}>{this.state.photoErr}</Text>
+
+              {this.state.photos.length ? <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View>
                   <Text style={{ paddingHorizontal: 8, textAlign: 'right', fontSize: 23, marginVertical: 10, color: '#000', fontWeight: '200' }}>الصور</Text>
                 </View>
@@ -295,23 +502,42 @@ class Account extends Component {
                     this.state.photos.length ? (
                       this.state.photos.map((img) => {
                         return (
-                          <TouchableOpacity style={{ alignItems: 'flex-start' }} key={img.id}>
-                            <Image style={{ height: 60, width: 60, margin: 4 }} source={{ uri: img.url }} />
-                          </TouchableOpacity>
+                          <View style={{ alignItems: 'flex-start' }}>
+                            <TouchableOpacity key={img.id}>
+                              <Image style={{ height: 60, width: 60, margin: 4 }} source={{ uri: img.url }} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              style={{ position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}
+                              onPress={() => this.handleDeleteImage(img.id)}
+                            >
+                              <Icon name="md-close" style={{ color: 'white' }} />
+                            </TouchableOpacity>
+                          </View>
                         )
                       })
-                    ) : (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                          <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added photos " : ' لاتوجد صور مضافة '}</Text>
-                          <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={() => this.props.navigation.navigate('AddPhoto')}>
-                            <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Photos' : 'أضف صور'}</Text>
-                          </TouchableOpacity>
-                        </View>
-                      )
+                    ) : null
                   }
+                </View>
+              </View> : null}
+
+              <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added photos " : ' لاتوجد صور مضافة '}</Text> */}
+                  <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleImageUpload}>
+                    {
+                      this.state.isPhotoLoading ?
+                        <ActivityIndicator />
+                        :
+                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Photos' : 'أضف صور'}</Text>
+
+                    }
+                  </TouchableOpacity>
                 </View>
               </View>
 
+
+              <Text style={{ color: this.state.showError && this.state.videErr ? 'red' : 'green', textAlign: 'center' }}>{this.state.videErr}</Text>
               <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View>
                   <Text style={{ paddingHorizontal: 8, textAlign: 'right', fontSize: 23, marginVertical: 10, color: '#000', fontWeight: '200' }}>الفيديوهات</Text>
@@ -321,21 +547,41 @@ class Account extends Component {
                     this.state.videos.length ? (
                       this.state.videos.map((vid) => {
                         return (
-                          <TouchableOpacity style={{ alignItems: 'flex-start' }} key={vid.id}>
-                            <Text>{vid.name}</Text>
-                            {/* <Image style={{height: 60, width: 60, margin: 4}} source={{uri: vid.url}} /> */}
-                          </TouchableOpacity>
+                          <View style={{ alignItems: 'flex-start' }} >
+                            <TouchableOpacity
+                              key={vid.id}
+                              onPress={() => Linking.openURL(vid.url)}
+                            >
+                              {/* <Text>{vid.name}</Text> */}
+                              <Image style={{ height: 60, width: 60, margin: 4 }} source={{ uri: vid.thumbnail }} />
+                              {/* <Image style={{height: 60, width: 60, margin: 4}} source={{uri: vid.url}} /> */}
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                              style={{ position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}
+                              onPress={() => this.handleDeleteVideo(vid.id)}
+                            >
+                              <Icon name="md-close" style={{ color: 'white' }} />
+                            </TouchableOpacity>
+                          </View>
                         )
                       })
-                    ) : (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                          <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added Videos " : ' لاتوجد فيديوهات مضافة '}</Text>
-                          <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={() => this.props.navigation.navigate('AddVideo')}>
-                            <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Videos' : 'أضف فيديو'}</Text>
-                          </TouchableOpacity>
-                        </View>
-                      )
+                    ) : null
                   }
+                </View>
+              </View>
+
+              <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added Videos " : ' لاتوجد فيديوهات مضافة '}</Text> */}
+                  <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleVideoUpload}>
+                    {
+                      this.state.isVideoLoading ?
+                        <ActivityIndicator />
+                        :
+                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Videos' : 'أضف فيديو'}</Text>
+                    }
+                  </TouchableOpacity>
                 </View>
               </View>
 

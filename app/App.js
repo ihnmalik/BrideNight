@@ -16,12 +16,21 @@ import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
+// const myFont = Platform.select({
+//     ios: {
+//       fontFamily: 'GESSTwoLight-Light',
+//     },
+//     android: {
+//       fontFamily: 'ArbFONTS-rabi3',
+//     },
+//   });
+
 const myFont = Platform.select({
     ios: {
       fontFamily: 'GESSTwoLight-Light',
     },
     android: {
-      fontFamily: 'ArbFONTS-rabi3',
+      fontFamily: 'NotoNaskhArabic-Regular',
     },
   });
 
@@ -110,14 +119,17 @@ const InfoStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex : 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerLeft: (<View></View>)
             }
             
         }
@@ -137,10 +149,13 @@ const AccountStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (<View></View>),
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
@@ -161,14 +176,17 @@ const AccountStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerLeft: (<View></View>)
             }
         }
     },
@@ -184,14 +202,17 @@ const AccountStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerLeft: (<View></View>)
             }
         }
     }
@@ -217,13 +238,16 @@ const ServicesStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerTintColor: '#fff',
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerLeft: (<View></View>)
             }
             
         }
@@ -241,9 +265,16 @@ const ServicesStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -265,9 +296,16 @@ const ServicesStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -288,10 +326,17 @@ const ServicesStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign:'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -312,10 +357,17 @@ const ServicesStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    textAlign: 'center',
+                    flex: 1
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -379,6 +431,8 @@ const HomeStackAr = createStackNavigator({
                     fontWeight: '300',
                     ...myFont,
                     fontSize: 23,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
@@ -408,10 +462,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)    
             }
         }
     },
@@ -427,10 +488,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
             }
         }
     },
@@ -447,10 +515,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)  
             }
         }
     },
@@ -467,10 +542,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff',  
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)   
             }
         }
     },
@@ -487,10 +569,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff',   
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)  
             }
         }
     },
@@ -507,10 +596,17 @@ const HomeStackAr = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',    
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>) 
             }
         }
     }
@@ -532,14 +628,17 @@ const InfoStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerLeft: (
                     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)
             }
 
         }
@@ -560,14 +659,17 @@ const AccountStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerLeft: (
                     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)
             }
 
         }
@@ -584,14 +686,17 @@ const AccountStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
-                headerRight: (
-                    <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
-                        <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerLeft: (<View></View>)
             }
         }
     },
@@ -607,14 +712,17 @@ const AccountStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    textAlign: 'center',
+                    flex: 1
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerLeft: (
-                    <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
-                        <Icon name="ios-menu" size={34} color="#fff" />
-                    </TouchableOpacity>)
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight:(<View></View>)
             }
         }
     }
@@ -634,10 +742,13 @@ const ServicesStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerRight: (<View></View>),
                 headerLeft: (
                     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
@@ -659,9 +770,16 @@ const ServicesStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight:(<View></View>)
                 // headerLeft: (
                 //     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -683,9 +801,16 @@ const ServicesStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign:'center'
                 },
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight:(<View></View>)
                 // headerLeft: (
                 //     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -707,10 +832,17 @@ const ServicesStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight:(<View></View>)
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -731,10 +863,17 @@ const ServicesStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (<View></View>)
                 // headerRight: (
                 //     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                 //         <Icon name="ios-menu" size={34} color="#fff" />
@@ -797,9 +936,11 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
-                headerBackTitle: ' ',
+                // headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerLeft: (
                     <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.toggleDrawer()}>
@@ -826,10 +967,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',  
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),
             }
         }
     },
@@ -845,10 +996,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),
             }
         }
     },
@@ -865,10 +1026,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff', 
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),   
             }
         }
     },
@@ -885,10 +1056,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',    
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),
             }
         }
     },
@@ -905,10 +1086,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff',   
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>), 
             }
         }
     },
@@ -925,10 +1116,20 @@ const HomeStackEn = createStackNavigator({
                     fontSize: 23,
                     alignItems: 'center',
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center',
                 },
                 headerBackTitle: ' ',
-                headerTintColor: '#fff',    
+                headerTintColor: '#fff', 
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                        <Icon name="md-arrow-back" size={34} color="#fff" />
+                    </TouchableOpacity>),
+                headerRight: (
+                    <TouchableOpacity style={{paddingRight: 15}}>
+                        {/* <Icon name="md-basket" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),   
             }
         }
     }
@@ -1131,10 +1332,16 @@ const ProfileStackAr = createStackNavigator({
                 headerTitleStyle: {
                     fontSize: 23,
                     fontWeight: '300',
-                    ...myFont
+                    ...myFont,
+                    flex: 1,
+                    textAlign: 'center'
                 },
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
+                headerLeft: (
+                    <TouchableOpacity style={{paddingLeft: 15}} >
+                        {/* <Icon name="md-arrow-back" size={34} color="#fff" /> */}
+                    </TouchableOpacity>),
                 headerRight: (
                     <TouchableOpacity style={{paddingRight: 15}} onPress={() => props.navigation.toggleDrawer()}>
                         <Icon name="ios-menu" size={34} color="#fff" />
