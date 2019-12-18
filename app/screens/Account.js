@@ -11,6 +11,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 
+import ArabicLang from '../i18n/ar.json'
+import EnglishLang from '../i18n/en.json'
+
 // green:    #7bbe50,
 // blue:  #188ee1,
 const myFont = Platform.select({
@@ -45,6 +48,7 @@ class Account extends Component {
     AsyncStorage.getItem('user').then((user) => {
       let u = JSON.parse(user)
       if (u) {
+        console.log(u)
         this.setState({ profile: u });
       }
 
@@ -329,9 +333,50 @@ class Account extends Component {
         alert(JSON.stringify(e))
       })
   }
+  handleDeleteWorkTime = (work_time_id) => {
+    const work_times = this.state.profile.user.work_times
+
+
+    fetch(`${url}user/worktime/destroy`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${this.state.profile.token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'language': this.props.language.lang,
+        // 'Authorization': 'Bearer ' + this.state.profile.token
+      },
+      body: `work_time_id=${this.state.work_time_id}`
+    })
+      .then(r => r.json())
+      .then((wt) => {
+        // alert(JSON.stringify(wt))
+        if (wt.error) {
+          console.warn('error')
+        }
+        if (wt.error) return this.setState({ showError: true, work_time_err: wt.message });
+
+        const updWorktimes = work_times.filter(wt => wt.id !== work_time_id)
+
+        this.setState({
+          profile: {
+            ...this.state.profile,
+            user: {
+              ...this.state.profile.user,
+              work_times: updWorktimes
+            }
+          }
+        })
+      }).catch((e) => {
+        alert(JSON.stringify(e))
+      })
+
+
+  }
   render() {
-    console.warn(this.state.workTimes)
     // alert(JSON.stringify(profile))
+    const { language } = this.props
+    const lang = language.lang === "en" ? EnglishLang.applang : ArabicLang.applang
     return (
       this.props.auth.isLoggedIn && this.state.profile ?
         (
@@ -345,11 +390,15 @@ class Account extends Component {
                     this.props.language.lang == 'en' ?
                       <TouchableOpacity onPress={this._editProfile} activeOpacity={.8} style={{ flexDirection: 'row', width: 120, height: 35, justifyContent: 'space-around', alignItems: 'center', padding: 1, margin: 10, borderWidth: 1, borderColor: 'skyblue', borderRadius: 10 }}>
                         <Icon name="md-create" size={20} color="skyblue" />
-                        <Text style={{ alignSelf: 'center', color: 'skyblue', ...myFont }}>Edit Profile</Text>
+                        <Text style={{ alignSelf: 'center', color: 'skyblue', ...myFont }}>
+                          {lang.edit_profile}
+                        </Text>
                       </TouchableOpacity>
                       :
                       <TouchableOpacity onPress={this._editProfile} activeOpacity={.8} style={{ flexDirection: 'row', width: 120, height: 35, justifyContent: 'space-around', alignItems: 'center', padding: 1, margin: 10, borderWidth: 1, borderColor: 'skyblue', borderRadius: 10 }}>
-                        <Text style={{ alignSelf: 'center', color: 'skyblue', ...myFont }}>تعديل الملف</Text>
+                        <Text style={{ alignSelf: 'center', color: 'skyblue', ...myFont }}>
+                          {lang.edit_profile}
+                        </Text>
                         <Icon name="md-create" size={20} color="skyblue" />
                       </TouchableOpacity>
                   }
@@ -365,19 +414,23 @@ class Account extends Component {
 
               <View style={{ width: '90%', padding: 7, backgroundColor: '#fff', marginVertical: 5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 17, paddingBottom: 10, fontWeight: '100' }}>Followers</Text>
-                  <Text style={{ textAlign: 'center', fontSize: 26, fontWeight: '100' }}>120</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 17, paddingBottom: 10, fontWeight: '100' }}>{lang.followers}</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 26, fontWeight: '100' }}>
+                    {this.state.profile ? this.state.profile.user.followers : 0}
+                  </Text>
                 </View>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                  <Text style={{ textAlign: 'center', fontSize: 17, paddingBottom: 10, fontWeight: '100' }}>Followings</Text>
-                  <Text style={{ textAlign: 'center', fontSize: 26, fontWeight: '100' }}>99</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 17, paddingBottom: 10, fontWeight: '100' }}>{lang.following}</Text>
+                  <Text style={{ textAlign: 'center', fontSize: 26, fontWeight: '100' }}>
+                    {this.state.profile ? this.state.profile.user.following : 0}
+                  </Text>
                 </View>
               </View>
 
               <View style={{ width: '90%', padding: 7, backgroundColor: '#fff' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 4 }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>Name: </Text>
+                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>{lang.name}: </Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ textAlign: 'center', fontWeight: '100' }}>{this.props.profile.name ? this.props.profile.name : (this.state.profile.user.name ? this.state.profile.user.name : ' - ')}</Text>
@@ -393,7 +446,7 @@ class Account extends Component {
               </View> */}
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 7 }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>Mobile: </Text>
+                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>{lang.mobile}: </Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ textAlign: 'center', fontWeight: '100' }}>{this.props.profile.mobile ? this.props.profile.mobile : (this.state.profile.user.mobile ? this.state.profile.user.mobile : ' - ')}</Text>
@@ -401,7 +454,7 @@ class Account extends Component {
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 7 }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>Country: </Text>
+                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>{lang.country}: </Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ textAlign: 'center', fontWeight: '100' }}>{this.props.profile.country ? this.props.profile.country : (this.state.profile.user.country ? this.state.profile.user.country : ' - ')}</Text>
@@ -409,7 +462,7 @@ class Account extends Component {
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 7 }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>City: </Text>
+                    <Text style={{ textAlign: 'center', fontWeight: '100' }}>{lang.city}: </Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ textAlign: 'center', fontWeight: '100' }}>{this.props.profile.region ? this.props.profile.region : (this.state.profile.user.region ? this.state.profile.user.region : ' - ')}</Text>
@@ -436,14 +489,24 @@ class Account extends Component {
               {
                 this.state.profile.user.isSubscriber && this.state.workTimes ?
                   <View style={{ width: '90%', padding: 7, marginVertical: 5, backgroundColor: '#fff', flexDirection: 'column', }}>
-                    <Text style={{ color: '#000', textAlign: 'right', fontWeight: '200' }}>أوقات العمل</Text>
-                    {this.state.workTimes.map((item) => {
+                    <Text
+                      style={{
+                        color: '#000',
+                        textAlign: this.props.language.lang === "en" ? 'left' : 'right',
+                        fontWeight: '200',
+                        fontSize: 23,
+                        paddingHorizontal: 10
+                      }}
+                    >
+                      {lang.work_times}:
+                    </Text>
+                    {this.state.profile && this.state.profile.user.work_times.map((item) => {
                       return (
-                        <View style={{ display: 'flex', flexDirection: 'row', padding: 10 }}>
-                          <Text style={{ color: '#000', textAlign: 'left', fontWeight: '200' }}>{item}</Text>
+                        <View style={{ display: 'flex', flexDirection: 'row', padding: 10 }} key={item.id}>
+                          <Text style={{ color: '#000', textAlign: 'left', fontWeight: '200' }}>{item.name}</Text>
                           <Icon
                             name="md-trash" style={{ marginLeft: 'auto', fontSize: 20 }}
-                          // onPress={}
+                            onPress={() => this.handleDeleteWorkTime(item.id)}
                           />
                         </View>
                       )
@@ -459,12 +522,12 @@ class Account extends Component {
                   this.state.memberInfo.exp_date ? (
                     <View style={{ width: '90%', padding: 7, marginVertical: 5, backgroundColor: '#fff', flexDirection: 'row', justifyContent: 'space-around' }}>
                       <View style={{ justifyContent: 'center' }}>
-                        <Text style={{ color: '#000', textAlign: 'center', fontWeight: '200' }}>Subscription Expires in: </Text>
+                        <Text style={{ color: '#000', textAlign: 'center', fontWeight: '200' }}>{lang.subscription_expires}</Text>
                       </View>
                       <View>
                         <Text style={{ color: '#000', textAlign: 'center', fontWeight: '200' }}>{this.state.memberInfo.exp_date}</Text>
                         <TouchableOpacity style={{ padding: 5, backgroundColor: '#000', marginVertical: 4 }} onPress={() => this.props.navigation.navigate('AccountRenew')}>
-                          <Text style={{ textAlign: 'center', color: '#fff' }}>{this.props.language.lang == 'en' ? 'Renew Now' : 'جدد اشتراكك الآن'}</Text>
+                          <Text style={{ textAlign: 'center', color: '#fff' }}>{lang.renew_now}</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -495,7 +558,16 @@ class Account extends Component {
 
               {this.state.photos.length ? <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View>
-                  <Text style={{ paddingHorizontal: 8, textAlign: 'right', fontSize: 23, marginVertical: 10, color: '#000', fontWeight: '200' }}>الصور</Text>
+                  <Text
+                    style={{
+                      paddingHorizontal: 8,
+                      textAlign: this.props.language.lang === "en" ? 'left' : 'right',
+                      fontSize: 23,
+                      marginVertical: 10, color: '#000', fontWeight: '200'
+                    }}
+                  >
+                    {lang.photos}
+                  </Text>
                 </View>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
                   {
@@ -521,26 +593,43 @@ class Account extends Component {
                 </View>
               </View> : null}
 
-              <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added photos " : ' لاتوجد صور مضافة '}</Text> */}
-                  <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleImageUpload}>
-                    {
-                      this.state.isPhotoLoading ?
-                        <ActivityIndicator />
-                        :
-                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Photos' : 'أضف صور'}</Text>
+              {
+                this.state.profile && this.state.profile.user.can_upload_photos
+                &&
+                <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added photos " : ' لاتوجد صور مضافة '}</Text> */}
+                    <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleImageUpload}>
+                      {
+                        this.state.isPhotoLoading ?
+                          <ActivityIndicator />
+                          :
+                          <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>
+                            {lang.add_photos}
+                          </Text>
 
-                    }
-                  </TouchableOpacity>
+                      }
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              }
 
 
               <Text style={{ color: this.state.showError && this.state.videErr ? 'red' : 'green', textAlign: 'center' }}>{this.state.videErr}</Text>
               <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View>
-                  <Text style={{ paddingHorizontal: 8, textAlign: 'right', fontSize: 23, marginVertical: 10, color: '#000', fontWeight: '200' }}>الفيديوهات</Text>
+                  <Text 
+                    style={{ 
+                      paddingHorizontal: 8, 
+                      textAlign: this.props.language.lang === "en" ? 'left' : 'right', 
+                      fontSize: 23, 
+                      marginVertical: 10, 
+                      color: '#000', 
+                      fontWeight: '200' 
+                    }}
+                  >
+                    {lang.videos}
+                  </Text>
                 </View>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
                   {
@@ -557,7 +646,7 @@ class Account extends Component {
                               {/* <Image style={{height: 60, width: 60, margin: 4}} source={{uri: vid.url}} /> */}
                             </TouchableOpacity>
 
-                            <TouchableOpacity 
+                            <TouchableOpacity
                               style={{ position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: 'red', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}
                               onPress={() => this.handleDeleteVideo(vid.id)}
                             >
@@ -571,7 +660,7 @@ class Account extends Component {
                 </View>
               </View>
 
-              <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+              {(this.state.profile && this.state.profile.user.can_upload_videos )&& <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added Videos " : ' لاتوجد فيديوهات مضافة '}</Text> */}
                   <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleVideoUpload}>
@@ -579,11 +668,13 @@ class Account extends Component {
                       this.state.isVideoLoading ?
                         <ActivityIndicator />
                         :
-                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>{this.props.language.lang == 'en' ? 'Add Videos' : 'أضف فيديو'}</Text>
+                        <Text style={{ textAlign: 'center', color: '#fff', fontSize: 16, ...myFont }}>
+                          {lang.add_videos}
+                        </Text>
                     }
                   </TouchableOpacity>
                 </View>
-              </View>
+              </View>}
 
               {/* <View style={{width: '90%', padding: 7, backgroundColor: '#fff', marginVertical: 5, flexDirection: 'row', justifyContent: 'space-around'}}>
               

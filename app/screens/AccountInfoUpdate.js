@@ -15,6 +15,11 @@ import AsyncStorage from '@react-native-community/async-storage'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
+import ArabicLang from '../i18n/ar.json'
+import EnglishLang from '../i18n/en.json'
+
+
+
 
 // green:    #7bbe50,
 // blue:  #188ee1,
@@ -766,11 +771,8 @@ class AccountInfoUpdate extends Component {
     }
 
     render() {
-
-        const { profile } = this.props;
-        console.warn(profile)
-
-        //   alert(JSON.stringify(profile))
+        const { profile, language } = this.props;
+        const lang = language.lang === "en" ? EnglishLang.applang : ArabicLang.applang
         return (
             this.props.auth.isLoggedIn && this.state.profile ?
                 (
@@ -798,10 +800,10 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: this.state.showError && this.state.nameMsg ? 'red' : 'green', textAlign: 'center', paddingVertical: 10 }}>{this.state.nameMsg}</Text>
                                         ) : null
                                     }
-                                    <Text>Name</Text>
+                                    <Text>{lang.name}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity onPress={this._updateProfileName} activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center' }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput
                                             style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }}
@@ -817,10 +819,10 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: this.state.showError && this.state.emailMsg ? 'red' : 'green', textAlign: 'center', paddingVertical: 10 }}>{this.state.emailMsg}</Text>
                                         ) : null
                                     }
-                                    <Text>Email</Text>
+                                    <Text>{lang.email}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity onPress={this._updateProfileEmail} activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center' }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput
                                             style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }}
@@ -839,10 +841,10 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: this.state.showError && this.state.mobileMsg ? 'red' : 'green', textAlign: 'center', paddingVertical: 10 }}>{this.state.mobileMsg}</Text>
                                         ) : null
                                     }
-                                    <Text>Mobile</Text>
+                                    <Text>{lang.mobile}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity onPress={this._updateProfileMobile} activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center' }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput
                                             style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }}
@@ -860,10 +862,10 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: this.state.showError && this.state.profileMobileMsg ? 'red' : 'green', textAlign: 'center', paddingVertical: 10 }}>{this.state.profileMobileMsg}</Text>
                                         ) : null
                                     }
-                                    <Text>Profile Mobile</Text>
+                                    <Text>{lang.profile_mobile}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity onPress={this._updateProfileProfileMobile} activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center' }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput
                                             style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }}
@@ -887,7 +889,7 @@ class AccountInfoUpdate extends Component {
                             </TouchableOpacity>  */}
                                                 <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 25 }}>
                                                     <Dropdown
-                                                        label='Select Country'
+                                                        label={lang.select_country}
                                                         value={this.state.countryID}
                                                         data={this.state.countries}
                                                         onChangeText={this._handleCountryChange}
@@ -910,13 +912,13 @@ class AccountInfoUpdate extends Component {
                                                 {
                                                     this.state.countryID && this.state.cityID ? (
                                                         <TouchableOpacity activeOpacity={.8} onPress={this._updateCountryCity} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                                         </TouchableOpacity>
                                                     ) : null
                                                 }
                                                 <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 25 }}>
                                                     <Dropdown
-                                                        label='Select Region/City'
+                                                        label={lang.select_region}
                                                         data={this.state.cities}
                                                         value={this.state.countryID ? this.state.cities[this.state.cityIndex] : this.state.cityID}
                                                         onChangeText={this._handleCityChange}
@@ -944,10 +946,10 @@ class AccountInfoUpdate extends Component {
                 </View> */}
 
                                 <View style={{ flex: 1, padding: 10, justifyContent: 'center' }}>
-                                    <Text style={{ textAlign: 'center' }}>Select User Type</Text>
+                                    <Text style={{ textAlign: 'center' }}>{lang.select_user_type}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                         <TouchableOpacity activeOpacity={.8} onPress={this._updateUserType} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 25 }}>
                                             <Dropdown
@@ -963,27 +965,27 @@ class AccountInfoUpdate extends Component {
                                 </View>
 
                                 <View style={{ flex: 1, padding: 10, justifyContent: 'center' }}>
-                                    <Text>النبذة: عربي</Text>
+                                    <Text>{lang.about_ar}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }} multiline numberOfLines={10} placeholder={profile.about_ar ? profile.about_ar : (this.state.profile.user.about_ar ? this.state.profile.user.about_ar : 'النبذة - عربي')} value={this.state.about_ar} onChangeText={this._handleAboutARChange} />
                                     </View>
                                 </View>
 
                                 <View style={{ flex: 1, padding: 10, justifyContent: 'center' }}>
-                                    <Text>About: English</Text>
+                                    <Text>{lang.about_en}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TouchableOpacity activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                            <Text style={{ color: '#fff' }}>Save</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
                                         <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }} multiline numberOfLines={10} placeholder={profile.about_en ? profile.about_en : (this.state.profile.user.about_en ? this.state.profile.user.about_en : 'About - English')} value={this.state.about_en} onChangeText={this._handleAboutENChange} />
                                     </View>
                                 </View>
 
                                 <View style={{ flex: 1, paddingHorizontal: 10, justifyContent: 'center' }}>
-                                    <Text style={{ textAlign: 'center', paddingVertical: 10 }}>Change Password</Text>
+                                    <Text style={{ textAlign: 'center', paddingVertical: 10 }}>{lang.change_password}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }} secureTextEntry placeholder="Password" />
                                     </View>
@@ -994,12 +996,12 @@ class AccountInfoUpdate extends Component {
                                         <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031' }} secureTextEntry placeholder="Password Confirm" />
                                     </View>
                                     <TouchableOpacity activeOpacity={.8} style={{ padding: 5, marginTop: 6, backgroundColor: '#303031', justifyContent: 'center' }}>
-                                        <Text style={{ color: '#fff', textAlign: 'center' }}>Save Password</Text>
+                                        <Text style={{ color: '#fff', textAlign: 'center' }}>{lang.save_password}</Text>
                                     </TouchableOpacity>
                                 </View>
 
                                 <View style={{ flex: 1, paddingHorizontal: 10, justifyContent: 'center' }}>
-                                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Add Work Time</Text>
+                                    <Text style={{ textAlign: 'center', marginTop: 20 }}>{lang.add_work_time}</Text>
                                     {
                                         this.state.work_time_err ? (
                                             <Text style={{ color: 'red' , textAlign: 'center', paddingVertical: 10 }}>{this.state.work_time_err}</Text>
@@ -1008,7 +1010,7 @@ class AccountInfoUpdate extends Component {
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                         <View style={{ flex: 1, justifyContent: 'center', }}>
                                             <Dropdown
-                                                label='Select Day'
+                                                label={lang.select_day}
                                                 value={this.state.dayId}
                                                 data={this.state.days}
                                                 onChangeText={this._handleDayChange}
@@ -1019,9 +1021,11 @@ class AccountInfoUpdate extends Component {
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
                                         {/* <View style={{flex: 1, justifyContent: 'center', paddingBottom: 25, flexDirection: 'row'}}> */}
                                         <TouchableOpacity activeOpacity={.8} onPress={this.showStartDatePicker} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                            <Text style={{ color: '#fff' }}>Select start time:</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.start_time}:</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', }} multiline numberOfLines={10} value={this.state.start_date} disabled={true} />
+                                        <View style={{ flex: 1, padding: 5, borderWidth: 1, borderColor: '#303031', }} >
+                                            <Text style={{fontSize: 15}}>{this.state.start_date}</Text>
+                                        </View>
 
                                         {/* </View> */}
                                     </View>
@@ -1030,9 +1034,11 @@ class AccountInfoUpdate extends Component {
                                     <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
                                         {/* <View style={{flex: 1, justifyContent: 'center', paddingBottom: 25, flexDirection: 'row'}}> */}
                                         <TouchableOpacity activeOpacity={.8} onPress={this.showEndStartDatePicker} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
-                                            <Text style={{ color: '#fff' }}>Select end time:</Text>
+                                            <Text style={{ color: '#fff' }}>{lang.end_time}</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', }} multiline numberOfLines={10} value={this.state.end_date} disabled={true} />
+                                        <View style={{ flex: 1, padding: 5, borderWidth: 1, borderColor: '#303031', }}>
+                                            <Text style={{fontSize: 15}}>{this.state.end_date}</Text>
+                                        </View>
 
                                         {/* </View> */}
                                     </View>
@@ -1041,7 +1047,7 @@ class AccountInfoUpdate extends Component {
 
 
                                     <TouchableOpacity activeOpacity={.8} onPress={this.handleAddWorkTime} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35, marginTop: 10, alignContent:'center', alignItems: 'center' }}>
-                                        <Text style={{ color: '#fff' }}>Add</Text>
+                                        <Text style={{ color: '#fff' }}>{lang.add}</Text>
                                     </TouchableOpacity>
                                     
 
