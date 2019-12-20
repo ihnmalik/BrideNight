@@ -19,8 +19,6 @@ import ArabicLang from '../i18n/ar.json'
 import EnglishLang from '../i18n/en.json'
 
 
-
-
 // green:    #7bbe50,
 // blue:  #188ee1,
 const myFont = Platform.select({
@@ -33,6 +31,7 @@ const myFont = Platform.select({
 })
 const users = [];
 class AccountInfoUpdate extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -114,7 +113,11 @@ class AccountInfoUpdate extends Component {
             let u = JSON.parse(user)
             if (u) {
                 //   alert(JSON.stringify(u.token))
+                console.log(u);
                 this.setState({ profile: u });
+                if (u.user.country_id) {
+                    this._loadCities(u.user.country_id)
+                }
             }
 
             if (this.state.profile.user.id) {
@@ -243,7 +246,14 @@ class AccountInfoUpdate extends Component {
                 // alert(uploadImg)
                 this.setState({
                     avatar: src,
-                    avatarData: uploadImg
+                    avatarData: uploadImg,
+                    // profile: {
+                    //     ...this.state.profile,
+                    //     user: {
+                    //         ...this.state.profile.user,
+                    //         avatar: uploadImg
+                    //     }
+                    // }
                 });
                 //   console.log(source)
                 this._updateProfileAvatar(uploadImg)
@@ -260,29 +270,69 @@ class AccountInfoUpdate extends Component {
         // for(let country of this.state.countries){
         //     country.value == countryID
         // }
+
         let countries = this.state.countries.filter((country) => country.value == countryID)
+
+
 
         // return alert(this.state.countries[countryID - 1].label)
         // console.log(countries[0].index)
-        this.setState({ countryID, cities: [], countryIndex: countries[0].index })
+        this.setState({
+            countryID, cities: [], countryIndex: countries[0].index, profile: {
+                ...this.state.profile,
+                user: {
+                    ...this.state.profile.user,
+                    country: countries.label,
+                    country_id: countryID,
+                    region_id: '',
+                    region: ''
+                }
+            }
+        })
         this._loadCities(countryID)
     };
     _handleCityChange = cityID => {
         // alert(this.state.cities[cityID - 1].label);
         let cities = this.state.cities.filter((city) => city.value == cityID)
         console.log(cities)
+        console.warn(cities[0].index)
         // return alert(this.state.countries[countryID - 1].label)
-        this.setState({ cityID, cityIndex: cities[0].index })
-            ;
+        this.setState({
+            cityID, cityIndex:
+                cities[0].index,
+            profile: {
+                ...this.state.profile,
+                user: {
+                    ...this.state.profile.user,
+                    region_id: cityID,
+                    region: cities[0].label
+                }
+            }
+        });
     }
     _handleDayChange = dayId => {
         let days = this.state.days.filter(day => day.value === dayId)
 
-        this.setState({dayId})
+        this.setState({ dayId })
     }
-    _handleUserTypeChange = userTypeID => this.setState({ userTypeID })
-    _handleAboutARChange = about_ar => this.setState({ about_ar })
-    _handleAboutENChange = about_en => this.setState({ about_en })
+    _handleUserTypeChange = userTypeID => {
+
+
+        const thisType = this.state.userTypes.filter(type => type.value === userTypeID)
+
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                user: {
+                    ...this.state.profile.user,
+                    user_type_id: userTypeID,
+                    user_type: thisType[0].label
+                }
+            }
+        })
+    }
+    _handleAboutARChange = about_ar => this.setState({ profile: { ...this.state.profile, user: { ...this.state.profile.user, about_ar } } })
+    _handleAboutENChange = about_en => this.setState({ profile: { ...this.state.profile, user: { ...this.state.profile.user, about_en } } })
     _handlePasswordChange = password => this.setState({ password })
     _handlePasswordConChange = password_con => this.setState({ password_con })
 
@@ -307,10 +357,20 @@ class AccountInfoUpdate extends Component {
                 // let res = JSON.parse(resp["_bodyInit"])
                 // let res = JSON.parse(resp["data"])
                 // console.log(resp)
+                alert(resp.message)
                 if (resp.error) return this.setState({ showError: true, avatarMsg: re.message });
                 let newImg = resp.data.avatar;
                 // alert(JSON.stringify(resp))
-                this.setState({ isLoading: false, tstBgColor: '#7bbe50', avatar: newImg });
+                this.setState({
+                    isLoading: false, tstBgColor: '#7bbe50',
+                    profile: {
+                        ...this.state.profile,
+                        user: {
+                            ...this.state.profile.user,
+                            avatar: newImg
+                        }
+                    }
+                });
 
                 AsyncStorage.getItem('user').then((user) => {
                     if (user) {
@@ -334,8 +394,8 @@ class AccountInfoUpdate extends Component {
     } // end of _updateProfileAvatar()
 
     _updateProfileName = () => {
-        if (!this.state.name) return this.setState({ showError: true, nameMsg: this.props.language.lang == 'ar' ? 'حقل تعديل الإسم فارغ' : 'No changes were made to your name' });
-        if (this.state.name.length < 3) return this.setState({ showError: true, nameMsg: this.props.language.lang == 'ar' ? 'الإسم يجب أن يكون من 3 أحرف فأكثر' : 'your name must be 3 characters or above' });
+        if (!this.state.profile.user.name) return this.setState({ showError: true, nameMsg: this.props.language.lang == 'ar' ? 'حقل تعديل الإسم فارغ' : 'No changes were made to your name' });
+        if (this.state.profile.user.name.length < 3) return this.setState({ showError: true, nameMsg: this.props.language.lang == 'ar' ? 'الإسم يجب أن يكون من 3 أحرف فأكثر' : 'your name must be 3 characters or above' });
 
         this.setState({ isLoading: true })
 
@@ -349,15 +409,15 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `name=${this.state.name}`
+            body: `name=${this.state.profile.user.name}`
         })
             .then((r) => r.json())
             .then((data) => {
+                alert(data.message)
                 // alert(JSON.stringify(resp))
                 if (data.error) return this.setState({ showError: true, avatarMsg: data.message });
                 let res = data;
                 let newName = res.data.name;
-
 
                 AsyncStorage.getItem('user').then((user) => {
                     if (user) {
@@ -381,8 +441,8 @@ class AccountInfoUpdate extends Component {
 
     _updateProfileEmail = () => {
         let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (!this.state.email) return this.setState({ showError: true, emailMsg: this.props.language.lang == 'ar' ? 'حقل تعديل البريد الإلكتروني فارغ' : 'No changes were made to your email' });
-        if (!re.test(this.state.email)) return this.setState({ showError: true, emailMsg: this.props.language.lang == 'ar' ? 'يجب ادخال بريد الكتروني صالح' : 'Please, Use a valid email' });
+        if (!this.state.profile.user.email) return this.setState({ showError: true, emailMsg: this.props.language.lang == 'ar' ? 'حقل تعديل البريد الإلكتروني فارغ' : 'No changes were made to your email' });
+        if (!re.test(this.state.profile.user.email)) return this.setState({ showError: true, emailMsg: this.props.language.lang == 'ar' ? 'يجب ادخال بريد الكتروني صالح' : 'Please, Use a valid email' });
 
         this.setState({ isLoading: true })
 
@@ -396,10 +456,11 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `email=${this.state.email}`
+            body: `email=${this.state.profile.user.email}`
         })
             .then((r) => r.json())
             .then((data) => {
+                alert(data.message)
                 // alert(JSON.stringify(resp))
                 if (data.error) return this.setState({ showError: true, emailMsg: data.message });
                 let res = data;
@@ -442,6 +503,7 @@ class AccountInfoUpdate extends Component {
         })
             .then((r) => r.json())
             .then((data) => {
+                alert(data.message)
                 // alert(JSON.stringify(resp))
                 if (data.error) return this.setState({ showError: true, mobileMsg: data.message });
                 let res = data;
@@ -485,6 +547,7 @@ class AccountInfoUpdate extends Component {
         })
             .then((r) => r.json())
             .then((data) => {
+                alert(data.message)
                 // alert(JSON.stringify(resp))
                 if (data.error) return this.setState({ showError: true, mobileMsg: data.message });
                 let res = data;
@@ -511,7 +574,7 @@ class AccountInfoUpdate extends Component {
 
     _updateProfileAboutAR = () => {
 
-        if (!this.state.about_ar) return this.setState({ showError: true, aboutARMsg: this.props.language.lang == 'ar' ? 'حقل تعديل النبذة - عربي فارغ' : 'No changes were made to About - Arabic  is empty' });
+        if (!this.state.profile.user.about_ar) return this.setState({ showError: true, aboutARMsg: this.props.language.lang == 'ar' ? 'حقل تعديل النبذة - عربي فارغ' : 'No changes were made to About - Arabic  is empty' });
         // if(this.state.name.length < 3) return this.showToast(this.props.language.lang == 'ar' ? 'الإسم يجب أن يكون من 3 أحرف فأكثر' : 'your name must be 3 characters or above', Toast.SHORT , Toast.BOTTOM, '#DC143C');
 
 
@@ -524,11 +587,12 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `about_ar=${this.state.about_ar}`
+            body: `about_ar=${this.state.profile.user.about_ar}`
         })
             .then((r) => r.json())
             .then((data) => {
                 // alert(JSON.stringify(resp))
+                alert(data.message)
                 if (data.error) return this.setState({ showError: true, aboutARMsg: data.message });
                 let res = data;
                 let newName = res.data.about_ar;
@@ -555,7 +619,7 @@ class AccountInfoUpdate extends Component {
 
     _updateProfileAboutEN = () => {
 
-        if (!this.state.about_en) return this.setState({ showError: true, aboutENMsg: this.props.language.lang == 'ar' ? 'حقل تعديل النبذة - انجليزي فارغ' : 'No changes were made to About - English is empty' });
+        if (!this.state.profile.user.about_en) return this.setState({ showError: true, aboutENMsg: this.props.language.lang == 'ar' ? 'حقل تعديل النبذة - انجليزي فارغ' : 'No changes were made to About - English is empty' });
         // if(this.state.name.length < 3) return this.showToast(this.props.language.lang == 'ar' ? 'الإسم يجب أن يكون من 3 أحرف فأكثر' : 'your name must be 3 characters or above', Toast.SHORT , Toast.BOTTOM, '#DC143C');
 
 
@@ -567,11 +631,12 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `about_en=${this.state.about_en}`
+            body: `about_en=${this.state.profile.user.about_en}`
         })
             .then((r) => r.json())
             .then((data) => {
                 // alert(JSON.stringify(resp))
+                alert(data.message)
                 if (data.error) return this.setState({ showError: true, aboutENMsg: data.message });
                 let res = data;
                 let newName = res.data.about_en;
@@ -629,8 +694,8 @@ class AccountInfoUpdate extends Component {
     _updateCountryCity = () => {
         this.setState({ countryCityMsg: '' })
         // console.log(this.state.countries[this.state.countryIndex].label + " << Country " + this.state.cities[this.state.cityIndex].label + " << City")
-        if (!this.state.countryID) return this.setState({ showError: true, countryCityMsg: this.props.language.lang == 'ar' ? 'يجب اختيار الدولة' : 'Country selection is compulsory' });
-        if (!this.state.cityID) return this.setState({ showError: true, countryCityMsg: this.props.language.lang == 'ar' ? 'يجب اختيار المدينة' : 'City selection is compulsory' });
+        if (!this.state.profile.user.country_id) return this.setState({ showError: true, countryCityMsg: this.props.language.lang == 'ar' ? 'يجب اختيار الدولة' : 'Country selection is compulsory' });
+        if (!this.state.profile.user.region_id) return this.setState({ showError: true, countryCityMsg: this.props.language.lang == 'ar' ? 'يجب اختيار المدينة' : 'City selection is compulsory' });
 
         fetch(url + 'user/profile', {
             method: 'POST',
@@ -640,11 +705,12 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `country=${this.state.countryID}&region=${this.state.cityID}`
+            body: `country=${this.state.profile.user.country_id}&region=${this.state.profile.user.region_id}`
         })
             .then((r) => r.json())
             .then((data) => {
                 // alert(JSON.stringify(resp))
+                alert(data.message)
                 if (data.error) return this.setState({ showError: true, countryCityMsg: data.message });
 
                 let res = data;
@@ -655,6 +721,8 @@ class AccountInfoUpdate extends Component {
                         let u = JSON.parse(user);
                         u.user.country = this.state.countries[this.state.countryIndex].label;
                         u.user.region = this.state.cities[this.state.cityIndex].label;
+                        u.user.region_id = this.state.profile.user.region_id
+                        u.user.country_id = this.state.profile.user.country_id
 
                         this.props.updateCountryCity(u);
                         this.setState({ showError: false, countryCityMsg: data.message });
@@ -672,7 +740,7 @@ class AccountInfoUpdate extends Component {
     }
 
     _updateUserType = () => {
-        if (!this.state.userTypeID) return this.setState({ showError: true, userTypeMsg: this.props.language.lang == 'ar' ? 'يجب اختيار نوع المستخدم' : 'User Type should be selected first' });
+        if (!this.state.profile.user.user_type_id) return this.setState({ showError: true, userTypeMsg: this.props.language.lang == 'ar' ? 'يجب اختيار نوع المستخدم' : 'User Type should be selected first' });
 
         fetch(url + 'user/profile', {
             method: 'POST',
@@ -682,14 +750,32 @@ class AccountInfoUpdate extends Component {
                 'Authorization': `Bearer ${this.state.profile.token}`,
                 'Language': this.props.language.lang
             },
-            body: `user_type_id=${this.state.userTypeID}`
+            body: `user_type_id=${this.state.profile.user.user_type_id}`
         })
             .then((r) => r.json())
             .then((data) => {
+                alert(data.message)
                 // alert(JSON.stringify(resp))
                 if (data.error) return this.setState({ showError: true, userTypeMsg: data.message });
 
-                return this.setState({ showError: false, userTypeMsg: data.message });
+                AsyncStorage.getItem('user').then((user) => {
+                    if (user) {
+                        let u = JSON.parse(user);
+                        u.user.user_type = this.state.profile.user.user_type
+                        u.user.user_type_id = this.state.profile.user.user_type_id
+
+                        this.props.updateCountryCity(u);
+                        this.setState({ showError: false, userTypeMsg: data.message });
+                        // u.user.email = "new@redux.com";
+                        // this.props.updateProfileEmail(u);
+
+                        // u.user.mobile = "05504030403";
+                        // this.props.updateProfileMobile(u);
+                    }
+
+                })
+
+                // return this.setState({ showError: false, userTypeMsg: data.message });
             }).catch((err) => {
                 alert(JSON.stringify(err))
             });
@@ -734,11 +820,11 @@ class AccountInfoUpdate extends Component {
     }
 
     handleAddWorkTime = () => {
-        if(this.state.dayId && this.state.start_date && this.state.end_date ) {
+        if (this.state.dayId && this.state.start_date && this.state.end_date) {
             this.setState({
                 work_time_err: ''
             })
-            fetch(url + 'user/worktime', {
+            fetch(url + 'user/worktime/innnn', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -750,6 +836,7 @@ class AccountInfoUpdate extends Component {
             })
                 .then((r) => r.json())
                 .then((data) => {
+                    alert(data.message)
                     // alert(JSON.stringify(resp))
                     if (data.error) return this.setState({ showError: true, work_time_err: data.message });
                     else {
@@ -761,6 +848,7 @@ class AccountInfoUpdate extends Component {
                         })
                     }
                 }).catch((err) => {
+                    console.warn(err)
                     alert(JSON.sgtringify(err))
                 });
         } else {
@@ -768,6 +856,46 @@ class AccountInfoUpdate extends Component {
                 work_time_err: 'Please Input All the Fields'
             })
         }
+    }
+
+    _handleUpdatEnChange = () => {
+        fetch(url + 'user/profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${this.state.profile.token}`,
+                'Language': this.props.language.lang
+            },
+            body: `about_en=${this.state.profile.user.about_en}`
+        })
+            .then((r) => r.json())
+            .then((data) => {
+                console.warn(data)
+                // alert(JSON.stringify(resp))
+                if (data.error) {
+                    alert(data.message)
+                }
+                // if (data.error) return this.setState({ showError: true, countryCityMsg: data.message });
+                else {
+
+                    let res = data;
+
+                    console.warn(data.message)
+
+                    alert(data.message)
+
+                    this.setState({
+                        profile: data
+                    })
+
+                    this.props._updateProfileAboutEN
+                    // let newName = res.data.name;
+
+                }
+            }).catch((err) => {
+                alert(JSON.stringify(err))
+            });
     }
 
     render() {
@@ -786,7 +914,8 @@ class AccountInfoUpdate extends Component {
                             }
                             <View style={{ width: '90%', padding: 15, backgroundColor: '#fff', position: 'relative', marginVertical: 1, flexDirection: 'row', justifyContent: 'space-around' }}>
                                 <TouchableOpacity activeOpacity={.8} onPress={this._openImagePickerType} style={{ position: 'relative', zIndex: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image style={{ width: 122, height: 122, borderRadius: 60, position: 'relative', borderWidth: 4, borderColor: '#eee' }} source={{ uri: profile.avatar ? profile.avatar : (this.state.avatar ? this.state.avatar : this.state.profile.user.avatar) }} />
+                                    <Image style={{ width: 122, height: 122, borderRadius: 60, position: 'relative', borderWidth: 4, borderColor: '#eee' }}
+                                        source={{ uri: this.state.profile.user.avatar }} />
                                     <TouchableOpacity activeOpacity={.8} onPress={this._openImagePickerType} style={{ width: 40, height: 40, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: -6, right: '62%', borderRadius: 25 }}>
                                         <Icon name="md-camera" size={21} color="gray" />
                                     </TouchableOpacity>
@@ -890,7 +1019,7 @@ class AccountInfoUpdate extends Component {
                                                 <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 25 }}>
                                                     <Dropdown
                                                         label={lang.select_country}
-                                                        value={this.state.countryID}
+                                                        value={this.state.profile.user.country}
                                                         data={this.state.countries}
                                                         onChangeText={this._handleCountryChange}
                                                     />
@@ -904,13 +1033,13 @@ class AccountInfoUpdate extends Component {
                                 }
 
                                 {
-                                    this.state.countryID && this.state.cities.length > 0 ? (
+                                    this.state.profile.user.country_id && this.state.cities.length > 0 ? (
                                         <View style={{ flex: 1, paddingHorizontal: 10, justifyContent: 'center' }}>
                                             {/* <Text style={{textAlign: 'center'}}>Select User Type</Text> */}
 
                                             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                                                 {
-                                                    this.state.countryID && this.state.cityID ? (
+                                                    this.state.profile.user.country_id && this.state.profile.user.region_id ? (
                                                         <TouchableOpacity activeOpacity={.8} onPress={this._updateCountryCity} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
                                                             <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                                         </TouchableOpacity>
@@ -920,7 +1049,7 @@ class AccountInfoUpdate extends Component {
                                                     <Dropdown
                                                         label={lang.select_region}
                                                         data={this.state.cities}
-                                                        value={this.state.countryID ? this.state.cities[this.state.cityIndex] : this.state.cityID}
+                                                        value={this.state.profile.user.region}
                                                         onChangeText={this._handleCityChange}
                                                     />
 
@@ -954,7 +1083,7 @@ class AccountInfoUpdate extends Component {
                                         <View style={{ flex: 1, justifyContent: 'center', paddingBottom: 25 }}>
                                             <Dropdown
                                                 label='User Type'
-                                                value={this.state.userTypeID}
+                                                value={this.state.profile.user.user_type}
                                                 onChangeText={this._handleUserTypeChange}
                                                 data={this.state.userTypes}
                                             />
@@ -967,20 +1096,39 @@ class AccountInfoUpdate extends Component {
                                 <View style={{ flex: 1, padding: 10, justifyContent: 'center' }}>
                                     <Text>{lang.about_ar}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
-                                        <TouchableOpacity activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
+                                        <TouchableOpacity
+                                            activeOpacity={.8}
+                                            style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}
+                                            onPress={this._updateProfileAboutAR}
+                                        >
                                             <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }} multiline numberOfLines={10} placeholder={profile.about_ar ? profile.about_ar : (this.state.profile.user.about_ar ? this.state.profile.user.about_ar : 'النبذة - عربي')} value={this.state.about_ar} onChangeText={this._handleAboutARChange} />
+                                        <TextInput
+                                            style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }} multiline numberOfLines={10}
+                                            placeholder={profile.about_ar ? profile.about_ar : (this.state.profile.user.about_ar ? this.state.profile.user.about_ar : 'النبذة - عربي')}
+                                            value={this.state.profile.user.about_ar}
+                                            onChangeText={this._handleAboutARChange}
+                                        />
                                     </View>
                                 </View>
 
                                 <View style={{ flex: 1, padding: 10, justifyContent: 'center' }}>
                                     <Text>{lang.about_en}</Text>
                                     <View style={{ flex: 1, flexDirection: 'row', }}>
-                                        <TouchableOpacity activeOpacity={.8} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}>
+                                        <TouchableOpacity
+                                            activeOpacity={.8}
+                                            style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35 }}
+                                            // onPress={this._handleUpdatEnChange}
+                                            onPress={this._updateProfileAboutEN}
+                                        >
                                             <Text style={{ color: '#fff' }}>{lang.save}</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }} multiline numberOfLines={10} placeholder={profile.about_en ? profile.about_en : (this.state.profile.user.about_en ? this.state.profile.user.about_en : 'About - English')} value={this.state.about_en} onChangeText={this._handleAboutENChange} />
+                                        <TextInput
+                                            style={{ flex: 1, padding: 10, borderWidth: 1, borderColor: '#303031', height: 70 }}
+                                            multiline numberOfLines={10}
+                                            placeholder={profile.about_en ? profile.about_en : (this.state.profile.user.about_en ? this.state.profile.user.about_en : 'About - English')}
+                                            value={this.state.profile.user.about_en} onChangeText={this._handleAboutENChange}
+                                        />
                                     </View>
                                 </View>
 
@@ -1004,7 +1152,7 @@ class AccountInfoUpdate extends Component {
                                     <Text style={{ textAlign: 'center', marginTop: 20 }}>{lang.add_work_time}</Text>
                                     {
                                         this.state.work_time_err ? (
-                                            <Text style={{ color: 'red' , textAlign: 'center', paddingVertical: 10 }}>{this.state.work_time_err}</Text>
+                                            <Text style={{ color: 'red', textAlign: 'center', paddingVertical: 10 }}>{this.state.work_time_err}</Text>
                                         ) : null
                                     }
                                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
@@ -1024,7 +1172,7 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: '#fff' }}>{lang.start_time}:</Text>
                                         </TouchableOpacity>
                                         <View style={{ flex: 1, padding: 5, borderWidth: 1, borderColor: '#303031', }} >
-                                            <Text style={{fontSize: 15}}>{this.state.start_date}</Text>
+                                            <Text style={{ fontSize: 15 }}>{this.state.start_date}</Text>
                                         </View>
 
                                         {/* </View> */}
@@ -1037,19 +1185,19 @@ class AccountInfoUpdate extends Component {
                                             <Text style={{ color: '#fff' }}>{lang.end_time}</Text>
                                         </TouchableOpacity>
                                         <View style={{ flex: 1, padding: 5, borderWidth: 1, borderColor: '#303031', }}>
-                                            <Text style={{fontSize: 15}}>{this.state.end_date}</Text>
+                                            <Text style={{ fontSize: 15 }}>{this.state.end_date}</Text>
                                         </View>
 
                                         {/* </View> */}
                                     </View>
 
-                                    
 
 
-                                    <TouchableOpacity activeOpacity={.8} onPress={this.handleAddWorkTime} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35, marginTop: 10, alignContent:'center', alignItems: 'center' }}>
+
+                                    <TouchableOpacity activeOpacity={.8} onPress={this.handleAddWorkTime} style={{ padding: 5, backgroundColor: '#303031', justifyContent: 'center', height: 35, marginTop: 10, alignContent: 'center', alignItems: 'center' }}>
                                         <Text style={{ color: '#fff' }}>{lang.add}</Text>
                                     </TouchableOpacity>
-                                    
+
 
                                 </View>
                             </View>

@@ -42,6 +42,31 @@ class Account extends Component {
     };
   }
 
+  updateData = () => {
+    AsyncStorage.getItem('user').then((user) => {
+      let u = JSON.parse(user)
+      if (u) {
+        console.warn(u)
+        this.setState({ profile: u });
+      }
+
+      if (this.state.profile) {
+        if (this.state.profile.user.id) {
+          this._loadUserPhotos(this.state.profile.user.id)
+          this._loadUserVids(this.state.profile.user.id)
+          this._loadWorkTimes(this.state.profile.user.id)
+        }
+      }
+
+      if (this.state.profile) {
+        if (this.state.profile.user.isSubscriber) {
+          this._loadMembershipInfo()
+        }
+      }
+      // alert(JSON.stringify(u))
+    })
+  }
+
   componentDidMount() {
     // this.setState({users: this.state.users.filter((item) => item.id <= this.state.pageIndex)})
 
@@ -68,6 +93,7 @@ class Account extends Component {
       // alert(JSON.stringify(u))
     })
   } // componentDidMount
+
 
   _login = () => {
     this.props.navigation.navigate('Login')
@@ -154,7 +180,9 @@ class Account extends Component {
   } // end of _loadUserVids()
 
   _editProfile = () => {
-    this.props.navigation.navigate('AccountInfoUpdate');
+    this.props.navigation.navigate('AccountInfoUpdate', {
+      updateData: this.updateData
+    });
   } // end of_editProfile()
 
 
@@ -346,27 +374,32 @@ class Account extends Component {
         'language': this.props.language.lang,
         // 'Authorization': 'Bearer ' + this.state.profile.token
       },
-      body: `work_time_id=${this.state.work_time_id}`
+      body: `work_time_id=${work_time_id}`
     })
       .then(r => r.json())
       .then((wt) => {
         // alert(JSON.stringify(wt))
-        if (wt.error) {
-          console.warn('error')
+        if (wt.errors) {
+          alert(wt.message)
         }
-        if (wt.error) return this.setState({ showError: true, work_time_err: wt.message });
+        else {
+          alert(wt.message)
+          const updWorktimes = work_times.filter(wt => wt.id !== work_time_id)
 
-        const updWorktimes = work_times.filter(wt => wt.id !== work_time_id)
-
-        this.setState({
-          profile: {
-            ...this.state.profile,
-            user: {
-              ...this.state.profile.user,
-              work_times: updWorktimes
+          this.setState({
+            profile: {
+              ...this.state.profile,
+              user: {
+                ...this.state.profile.user,
+                work_times: updWorktimes
+              }
             }
-          }
-        })
+          })
+        }
+        // if (wt.error) return this.setState({ showError: true, work_time_err: wt.message });
+
+        // console.warn(wt)
+        
       }).catch((e) => {
         alert(JSON.stringify(e))
       })
@@ -618,14 +651,14 @@ class Account extends Component {
               <Text style={{ color: this.state.showError && this.state.videErr ? 'red' : 'green', textAlign: 'center' }}>{this.state.videErr}</Text>
               <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View>
-                  <Text 
-                    style={{ 
-                      paddingHorizontal: 8, 
-                      textAlign: this.props.language.lang === "en" ? 'left' : 'right', 
-                      fontSize: 23, 
-                      marginVertical: 10, 
-                      color: '#000', 
-                      fontWeight: '200' 
+                  <Text
+                    style={{
+                      paddingHorizontal: 8,
+                      textAlign: this.props.language.lang === "en" ? 'left' : 'right',
+                      fontSize: 23,
+                      marginVertical: 10,
+                      color: '#000',
+                      fontWeight: '200'
                     }}
                   >
                     {lang.videos}
@@ -660,7 +693,7 @@ class Account extends Component {
                 </View>
               </View>
 
-              {(this.state.profile && this.state.profile.user.can_upload_videos )&& <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
+              {(this.state.profile && this.state.profile.user.can_upload_videos) && <View style={{ width: '90%', padding: 7, margin: 7, backgroundColor: 'white' }}>
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{ textAlign: 'center', color: '#303031', fontSize: 18, ...myFont }}>{this.props.language.lang == 'en' ? " There isn't any added Videos " : ' لاتوجد فيديوهات مضافة '}</Text> */}
                   <TouchableOpacity style={{ padding: 7, width: 180, backgroundColor: '#303031', marginVertical: 4, borderRadius: 5 }} onPress={this.handleVideoUpload}>

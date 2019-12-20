@@ -719,7 +719,11 @@ const AccountStackEn = createStackNavigator({
                 headerBackTitle: ' ',
                 headerTintColor: '#fff',
                 headerLeft: (
-                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => props.navigation.goBack()}>
+                    <TouchableOpacity style={{paddingLeft: 15}} onPress={() => {
+                        const updateDate = props.navigation.getParam('updateData')()
+
+                        props.navigation.goBack()
+                    }}>
                         <Icon name="md-arrow-back" size={34} color="#fff" />
                     </TouchableOpacity>),
                 headerRight:(<View></View>)

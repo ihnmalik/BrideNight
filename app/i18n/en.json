@@ -32,6 +32,6 @@
         "select_day": "Select Day",
         "start_time": "Select start time",
         "end_time": "Select end time",
-        "add": "Add"
+        "add": "Add Work Time"
     }
 }

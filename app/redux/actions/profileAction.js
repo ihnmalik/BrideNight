@@ -12,6 +12,7 @@ import { UPDATE_PROFILE_NAME,
          UPDATE_PROFILE_AVATAR,
          UPDATE_PROFILE_PUSH_TOKEN,
          UPDATE_PROFILE_UUID,
+         UPDATE_COUNTRY_CITY
         //  UPDATE_PORFILE_LOGOUT
          } from './types';
 
