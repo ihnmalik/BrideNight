@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, View} from 'react-native';
-import {url} from '../utils/appsettings';
+import {API_URL, url} from '../utils/appsettings';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import {mapDispatchToProps, mapStateToProps} from "../utils/AppConnecter";
-import {appLocale, getUser} from "../Helpers";
+import {appLocale, fetcher, getUser} from "../Helpers";
 
 class Splash extends Component {
     constructor(props) {
@@ -35,6 +35,54 @@ class Splash extends Component {
     refreshToken = (token, user) => {
 
           // alert(JSON.stringify(user));
+        fetcher(this,API_URL('refreshToken'))
+            .setToken(token)
+            // .setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjE2LCJpc3MiOiJodHRwczovL2JyaWRlbmlnaHQuYmFuYW50ZWMuY29tL2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNTc0OTM3OTIzLCJleHAiOjE1NzUxMTA3MjMsIm5iZiI6MTU3NDkzNzkyMywianRpIjoiOUVxTGFpTXk3b2xhdE9EZCJ9.YhWtTqp7FCRFT1opH2qIQ3jyX4AYyrCVMqXpm4yLl-4")
+            // .setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjczLCJpc3MiOiJodHRwczovL2JyaWRlbmlnaHQuYmFuYW50ZWMuY29tL2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNTc3MTAzMjA2LCJleHAiOjE1NzcyNzYwMDYsIm5iZiI6MTU3NzEwMzIwNiwianRpIjoiYmtLMDJoZGpKZXhKdjFFSCJ9.YvUkNtIY-ORwMkEVYDiiPAyZWVzsXnQ_nsG7A36z4TM")
+            // .get('auth/refresh-token')
+            .get();
+            // .error( error => {
+            //     console.log("my error");
+            //     console.log(error);
+            // });
+            // .json()
+            // .then((res) => {
+            //     console.log("refresh", res);
+            //     // console.log(res.fetch.header);
+            //     // alert(JSON.stringify(res.data.token))
+            //     // alert(JSON.stringify(res))
+            //     // let re = JSON.parse(res["_bodyInit"]);
+            //     // alert(JSON.stringify(res))
+            //     return ;
+            //     if (res.error) {
+            //         console.warn("error fetch");
+            //         console.warn(res);
+            //         console.warn(res.headers);
+            //         return ;
+            //         return AsyncStorage.removeItem('user').then(() => {
+            //             this.props.logOut();
+            //             navigate('AppMain');
+            //         });
+            //     }
+            //     if (res.data.token) {
+            //
+            //         return AsyncStorage.setItem('user', JSON.stringify({...user, token: res.data.token})).then(() => {
+            //             // AsyncStorage.getItem('user').then((dat) => {
+            //             //     alert(JSON.stringify(JSON.parse(dat)))
+            //             // })
+            //             setTimeout(() => {
+            //                 this.props.navigation.navigate('AppMain');
+            //             }, 2000)
+            //         })
+            //     }
+            //
+            //     this.props.navigation.navigate('AppMain');
+            //     return res;
+            // }).catch((e) => {
+            //     // alert("not updated")
+            //     console.log("error splash refresh token", e);
+            // });
+return;
         fetch(url + 'auth/refresh-token', {
             method: 'GET',
             headers: {

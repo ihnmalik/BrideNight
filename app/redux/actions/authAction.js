@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 
-import {LOGOUT} from './types';
-
+import {LOGIN, LOGOUT} from './types';
 
 export const logOut = () => {
     return (dispatch) => {
@@ -12,11 +11,11 @@ export const logOut = () => {
 };
 
 export const logIn = () => {
-    console.log('login dispatches')
+    // console.log('login dispatches');
     return (dispatch) => {
-        console.log('inside dispatch')
+        // console.log('inside dispatch');
         AsyncStorage.setItem('isLoggedIn', JSON.stringify(true)).then(() => {
-            dispatch({type: LOGOUT, payload: true}) ; 
+            dispatch({type: LOGIN, payload: true}) ;
         })
     }
 };
