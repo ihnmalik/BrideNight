@@ -34,7 +34,7 @@ class Splash extends Component {
 
     refreshToken = (token, user) => {
 
-          alert(JSON.stringify(user));
+          // alert(JSON.stringify(user));
         fetch(url + 'auth/refresh-token', {
             method: 'GET',
             headers: {
