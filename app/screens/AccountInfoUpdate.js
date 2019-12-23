@@ -1,15 +1,39 @@
-import React, { Component, } from 'react';
-import { View, StatusBar, Image, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ScrollView, Platform, TextInput } from 'react-native';
+import React, {Component,} from 'react';
+import {
+    Image,
+    Platform,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { changeToArabic, changeToEnglish } from '../redux/actions/languageAction';
-import { logIn, logOut } from '../redux/actions/authAction';
-import { url } from '../utils/appsettings';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {logIn, logOut} from '../redux/actions/authAction';
+import {url} from '../utils/appsettings';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import { updateProfileName, updateProfileEmail, updateProfileMobile, updateProfileProfileMobile, updateProfileAboutAR, updateProfileAboutEN, updateProfileStatus, updateProfileStatusLabel, updateProfileLocale, updateProfileAvatar, updateCountryCity, updateProfilePushToken, updateProfileUUID, updateProfileLogOut } from '../redux/actions/profileAction';
-import { Dropdown } from 'react-native-material-dropdown';
+import {
+    updateCountryCity,
+    updateProfileAboutAR,
+    updateProfileAboutEN,
+    updateProfileAvatar,
+    updateProfileEmail,
+    updateProfileLocale,
+    updateProfileLogOut,
+    updateProfileMobile,
+    updateProfileName,
+    updateProfileProfileMobile,
+    updateProfilePushToken,
+    updateProfileStatus,
+    updateProfileStatusLabel,
+    updateProfileUUID
+} from '../redux/actions/profileAction';
+import {Dropdown} from 'react-native-material-dropdown';
 import AsyncStorage from '@react-native-community/async-storage'
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -1240,12 +1264,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        changeToArabic,
-        changeToEnglish,
         logIn,
         logOut,
-        changeToArabic,
-        changeToEnglish,
         updateProfileName,
         updateProfileEmail,
         updateProfileMobile,

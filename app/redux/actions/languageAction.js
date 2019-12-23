@@ -1,37 +1,44 @@
-import { CHANGE_TO_ARABIC, CHANGE_TO_ENGLISH } from './types';
+import {CHANGE_LOCALE} from './types';
 // import { AsyncStorage } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage';
 import RNRestart from 'react-native-restart';
 
-const ar = require('../../i18n/ar.json');
-const en = require('../../i18n/en.json');
 
+/**
+ * Default Application locale
+ * @type {string}
+ */
+export const LOCALE = "ar";
+/**
+ * AsyncStorage KEY
+ * @type {string}
+ */
+export const LOCALE_STORAGE_KEY = "LANGUAGE";
+
+
+/**
+ * Set Application locale
+ * @param locale
+ * @returns {function(...[*]=)}
+ */
+export const setLocale = (locale) => {
+    return (dispatch) => {
+        AsyncStorage.setItem(LOCALE_STORAGE_KEY, locale)
+            .then(() => {
+                locale = locale || LOCALE;
+                dispatch({
+                    type: CHANGE_LOCALE,
+                    payload: locale,
+                });
+                setTimeout(() => {
+                    RNRestart.Restart();
+                }, 500)
+            })
+    }
+};
 
 export const loadLanguage = () => {
     return (dispatch) => {
 
     }
-}
-
-export const changeToEnglish = () => {
-    return (dispatch) => {
-        AsyncStorage.setItem('language', 'en').then(() => {
-          dispatch({type: CHANGE_TO_ENGLISH, payload: en});
-          setTimeout(() => {
-            RNRestart.Restart()
-          }, 500)
-        })  
-    }
-}
-
-export const changeToArabic = () => {
-    return (dispatch) => {
-        AsyncStorage.setItem('language', 'ar').then(() => {
-           dispatch({type: CHANGE_TO_ARABIC, payload: ar}) ;
-           setTimeout(() => {
-            RNRestart.Restart()
-          }, 500)
-        })
-        
-    }
-}
+};

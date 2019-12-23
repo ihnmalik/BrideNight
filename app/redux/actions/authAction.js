@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { LOGIN, LOGOUT } from './types';
+import {LOGOUT} from './types';
 
 
 export const logOut = () => {
@@ -9,7 +9,7 @@ export const logOut = () => {
             dispatch({type: LOGOUT, payload: false}) ; 
         })
     }
-}
+};
 
 export const logIn = () => {
     console.log('login dispatches')
@@ -19,4 +19,4 @@ export const logIn = () => {
             dispatch({type: LOGOUT, payload: true}) ; 
         })
     }
-}
+};
